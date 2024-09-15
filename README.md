@@ -69,3 +69,15 @@ Where $P$ is the loan principal and $M$ is the fixed monthly payment.
 #### Compounding
 
 For either ```interest_type```, any monthly interest not paid by the monthly payment is added to the principal and then accrues interest in the next month. This could be changed to optionally allow "simple interest" without this monthly compounding.
+
+
+## Output values
+
+- The function returns an immutable ```LoanProjection``` object. This contains two tuples: ```month_end_balance``` and ```monthly_interest_charged```. If argument ```print_table``` is true, these tuples are also output to the terminal as a table.
+- Each element of the output tuples corresponds to one month of the loan term, starting at the end of the first month.
+
+## Rounding procedure
+
+- All calculations are performed using decimal arithmetic with 28 significant figures, while output values are decimals with two decimal places for display purposes. This can be changed by setting ```loan.DECIMAL_PLACES_IO```.
+- The output monthly balances are rounded using the "round half even" method, though this can be changed by setting ```loan.OUTPUT_ROUNDING_METHOD``` to a different method flag.
+- The rounded balances are used to create the monthly interest output/display values, so that for each month the outputs for opening balance, interest and payment sum exactly to the closing balance.
