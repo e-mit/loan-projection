@@ -114,7 +114,29 @@ def loan_projection(  # pylint: disable=R0913
     interest_type: InterestType,
     print_table: bool = False,
 ) -> LoanProjection:
-    """Calculate the projected monthly balance and interest for a loan."""
+    """Calculate the projected monthly balance and interest for a loan.
+
+    The interest rate is input as an annual value, with months treated as
+    equal 1/12 periods of a year.
+
+    Args:
+        principal (positive Decimal): The loan principal and initial balance.
+        interest_rate_annual_percentage (positive Decimal, or zero): The interest
+            rate for a whole year.
+        term_months (positive int): The duration of the loan.
+        monthly_payment (positive Decimal, or zero): The fixed amount paid per month.
+        interest_type (InterestType.EFFECTIVE or InterestType.NOMINAL): Determines
+            the conversion from annual to monthly interest.
+        print_table (bool): If True, the data will be printed as a table to stdout.
+
+    Returns:
+        LoanProjection:
+            Containing tuples month_end_balance and monthly_interest_charged.
+
+    The projection stops early (before 'term_months') if the balance falls
+    to or below zero, and the returned data are truncated at this point.
+
+    """
     for var in [
         "principal",
         "interest_rate_annual_percentage",
