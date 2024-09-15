@@ -1,0 +1,14 @@
+name: pyright
+
+on: [push, pull_request]
+
+jobs:
+  pyright:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Prepare test environment
+        uses: ./.github/actions/prepare-test-environment
+      - name: pyright
+        run: pyright

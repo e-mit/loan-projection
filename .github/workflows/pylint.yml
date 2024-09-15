@@ -1,0 +1,14 @@
+name: pylint
+
+on: [push, pull_request]
+
+jobs:
+  pylint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Prepare test environment
+        uses: ./.github/actions/prepare-test-environment
+      - name: pylint
+        run: pylint *.py

@@ -1,0 +1,14 @@
+name: ruff-lint
+
+on: [push, pull_request]
+
+jobs:
+  mypy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Prepare test environment
+        uses: ./.github/actions/prepare-test-environment
+      - name: ruff-lint
+        run: ruff check

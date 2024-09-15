@@ -1,0 +1,7 @@
+pytest
+mypy
+pylint
+pyright
+ruff
+pytest-mock
+pytest-cov
