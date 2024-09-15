@@ -26,6 +26,13 @@ class LoanProjection:
     month_end_balance: tuple[Dec, ...]
     monthly_interest_charged: tuple[Dec, ...]
 
+    def __post_init__(self):
+        if len(self.month_end_balance) != len(self.monthly_interest_charged):
+            raise ValueError(
+                f"Data inputs have unequal length: {len(self.month_end_balance)} "
+                f"and {len(self.monthly_interest_charged)}."
+            )
+
 
 class InterestType(Enum):
     """Indicates the method of annual to monthly interest rate conversion."""
@@ -82,6 +89,11 @@ def loan_projection(  # pylint: disable=R0913
                 f"Argument '{var}' cannot have more than {DECIMAL_PLACES_IO} "
                 f"decimal places, but got {-locals()[var].as_tuple().exponent}."
             )
+    if not isinstance(term_months, int):
+        raise TypeError(
+            "Argument 'term_months' must be an integer, "
+            f"but got {type(term_months).__name__}."
+        )
 
     if interest_rate_annual_percentage == 0:
         month_end_balance = [

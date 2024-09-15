@@ -30,6 +30,24 @@ def test_principal_value_error(interest_type, principal):
 @pytest.mark.parametrize(
     "interest_type", [loan.InterestType.NOMINAL, loan.InterestType.EFFECTIVE]
 )
+@pytest.mark.parametrize("term_months", [0, -5])
+def test_term_value_error(interest_type, term_months):
+    principal = D(10000)
+    interest_rate_annual_percentage = D("5.5")
+    monthly_payment = D(120)
+    with pytest.raises(ValueError):
+        loan.loan_projection(
+            principal,
+            interest_rate_annual_percentage,
+            term_months,
+            monthly_payment,
+            interest_type,
+        )
+
+
+@pytest.mark.parametrize(
+    "interest_type", [loan.InterestType.NOMINAL, loan.InterestType.EFFECTIVE]
+)
 @pytest.mark.parametrize("monthly_payment", [D(-200), too_many_decimal_places])
 def test_payment_value_error(interest_type, monthly_payment):
     principal = D(10000)
@@ -93,4 +111,11 @@ def test_unknown_interest_type():
             term_months,
             monthly_payment,
             interest_type=7678988,  # type: ignore
+        )
+
+
+def test_LoanProjection_unequal_tuples_error():
+    with pytest.raises(ValueError):
+        loan.LoanProjection(
+            month_end_balance=(D(1), D(2)), monthly_interest_charged=(D(1), D(2), D(3))
         )
