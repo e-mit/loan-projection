@@ -1,6 +1,7 @@
 """Unit tests for the loan projection function."""
 
 from decimal import Decimal as D
+from unittest.mock import patch
 
 import pytest
 
@@ -326,3 +327,42 @@ def test_zero_payments_effective_interest():
         projection.monthly_interest_charged,
         projection.month_end_balance,
     )
+
+
+def test_print_function_called():
+    principal = D(100000)
+    interest_rate_annual_percentage = D("4.05")
+    term_months = 63
+    monthly_payment = D("530.60")
+
+    with patch("loan.print_loan_projection") as print_loan_projection:
+        projection = loan.loan_projection(
+            principal,
+            interest_rate_annual_percentage,
+            term_months,
+            monthly_payment,
+            loan.InterestType.NOMINAL,
+            print_table=True,
+        )
+        print_loan_projection.assert_called_with(projection)
+        assert len(projection.month_end_balance) == term_months
+        assert len(projection.monthly_interest_charged) == term_months
+
+
+def test_print_function_not_called_by_default():
+    principal = D(100000)
+    interest_rate_annual_percentage = D("4.05")
+    term_months = 63
+    monthly_payment = D("530.60")
+
+    with patch("loan.print_loan_projection") as print_loan_projection:
+        projection = loan.loan_projection(
+            principal,
+            interest_rate_annual_percentage,
+            term_months,
+            monthly_payment,
+            loan.InterestType.NOMINAL,
+        )
+        print_loan_projection.assert_not_called()
+        assert len(projection.month_end_balance) == term_months
+        assert len(projection.monthly_interest_charged) == term_months

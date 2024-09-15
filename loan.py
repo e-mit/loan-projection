@@ -34,6 +34,10 @@ class LoanProjection:
             )
 
 
+def print_loan_projection(_projection: LoanProjection):
+    """Print table of values."""
+
+
 class InterestType(Enum):
     """Indicates the method of annual to monthly interest rate conversion."""
 
@@ -70,6 +74,7 @@ def loan_projection(  # pylint: disable=R0913
     term_months: int,
     monthly_payment: Dec,
     interest_type: InterestType,
+    print_table: bool = False,
 ) -> LoanProjection:
     """Calculate the projected monthly balance and interest for a loan."""
     for var in [
@@ -130,4 +135,6 @@ def loan_projection(  # pylint: disable=R0913
         month_end_balance=tuple(month_end_balance),
         monthly_interest_charged=tuple(monthly_interest_charged),
     )
+    if print_table:
+        print_loan_projection(projection)
     return projection
