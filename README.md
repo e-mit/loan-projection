@@ -1,9 +1,16 @@
 # Loan-Projection
 
+![tests](https://github.com/e-mit/loan-projection/actions/workflows/tests.yml/badge.svg)
+![coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/e-mit/9df92671b4e2859b1e75cf762121b73f/raw/loan-projection.json)
+![mypy](https://github.com/e-mit/loan-projection/actions/workflows/mypy.yml/badge.svg)
+![pylint](https://github.com/e-mit/loan-projection/actions/workflows/pylint.yml/badge.svg)
+![pyright](https://github.com/e-mit/loan-projection/actions/workflows/pyright.yml/badge.svg)
+![ruff-lint](https://github.com/e-mit/loan-projection/actions/workflows/ruff-lint.yml/badge.svg)
+![ruff-format](https://github.com/e-mit/loan-projection/actions/workflows/ruff-format.yml/badge.svg)
+
 A Python function to calculate the projected monthly balance on a loan.
 
 The function displays the interest charged and the remaining balance each month, for the duration of the loan.
-
 
 
 ## Testing and development
