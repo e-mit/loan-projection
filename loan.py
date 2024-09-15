@@ -71,7 +71,22 @@ class InterestType(Enum):
 def loan_balance(
     principal: Dec, monthly_rate: Dec, months: int, monthly_payment: Dec
 ) -> Dec:
-    """Calculate the remaining balance on a loan after a given number of months."""
+    """Calculate the remaining balance on a loan after a given number of months.
+
+    This function computes the remaining loan balance using the initial principal,
+    the monthly interest rate, the number of months of payments, and the monthly
+    payment amount.
+
+    Args:
+        principal (Decimal): The loan principal (initial balance).
+        monthly_rate (Decimal): The fractional monthly interest rate (e.g. 0.05 for 5%).
+        months (int): The number of months that have passed since the loan began.
+        monthly_payment (Decimal): The fixed monthly payment amount.
+
+    Returns:
+        Decimal: The remaining balance on the loan after the specified number of months.
+
+    """
     return (
         principal * ((monthly_rate + 1) ** months)
         - monthly_payment * (((monthly_rate + 1) ** months) - 1) / monthly_rate
