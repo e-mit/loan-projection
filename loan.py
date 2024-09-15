@@ -1,7 +1,4 @@
-"""Loan projection functions.
-
-A Python function to calculate the projected monthly balance on a loan.
-"""
+"""loan.py: functions for calculating loan balance and interest."""
 
 from dataclasses import dataclass
 from decimal import ROUND_HALF_EVEN
@@ -34,8 +31,34 @@ class LoanProjection:
             )
 
 
-def print_loan_projection(_projection: LoanProjection):
-    """Print table of values."""
+def print_loan_projection(projection: LoanProjection):
+    """Print a table to stdout showing loan interest and balance for each month."""
+    month = {
+        "title": "Month",
+        "data": [1 + x for x in range(len(projection.month_end_balance))],
+    }
+    interest = {
+        "title": "Interest Charged",
+        "data": projection.monthly_interest_charged,
+    }
+    balance = {"title": "Remaining Balance", "data": projection.month_end_balance}
+    spacer = "   "
+
+    print()
+    columns = [month, interest, balance]
+    for v in columns:
+        max_value_width = len(str(max(v["data"], key=abs)))  # type: ignore
+        v["width"] = max(max_value_width, len(v["title"]))  # type: ignore
+        print(f"{v['title']:>{v['width']}}{spacer}", end="")
+    print()
+    for v in columns:
+        print(f"{'-' * len(v['title']):>{v['width']}}{spacer}", end="")
+    print()
+    for i in range(len(projection.month_end_balance)):
+        for v in columns:
+            print(f"{v['data'][i]:>{v['width']}}{spacer}", end="")
+        print()
+    print()
 
 
 class InterestType(Enum):
