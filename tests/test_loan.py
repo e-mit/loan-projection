@@ -110,6 +110,44 @@ def test_mortgage_website_calculator_values(
     )
 
 
+def test_mortgage_barclays_schedule():
+    """Values from Barclays capital repayment mortgage calculator website."""
+    principal = D(100000)
+    interest_rate_annual_percentage = D("4.05")
+    term_months = 63
+    monthly_payment = D("530.60")
+    year_end_balance = [
+        D("97613.27"),
+        D("95153.56"),
+        D("92592.88"),
+        D("89929.54"),
+        D("87150.4"),
+    ]
+    end_balance = D("86436.14")  # After 63 months vs 60 for year_end_balance[-1]
+
+    projection = loan.loan_projection(
+        principal,
+        interest_rate_annual_percentage,
+        term_months,
+        monthly_payment,
+        loan.InterestType.NOMINAL,
+    )
+
+    assert len(projection.month_end_balance) == term_months
+    assert len(projection.monthly_interest_charged) == term_months
+    assert projection.month_end_balance[-1] == approx_website_value(end_balance)
+    for year_index, month_index in enumerate(range(11, 63, 12)):
+        assert projection.month_end_balance[month_index] == approx_website_value(
+            year_end_balance[year_index]
+        )
+    assert_monthly_balance_consistency(
+        principal,
+        monthly_payment,
+        projection.monthly_interest_charged,
+        projection.month_end_balance,
+    )
+
+
 @pytest.mark.parametrize(
     "interest_type", [loan.InterestType.NOMINAL, loan.InterestType.EFFECTIVE]
 )
