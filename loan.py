@@ -4,11 +4,19 @@ A Python function to calculate the projected monthly balance on a loan.
 """
 
 from dataclasses import dataclass
+from decimal import ROUND_HALF_EVEN
 from decimal import Decimal as Dec
 from enum import Enum, auto
 from typing import Final
 
+OUTPUT_ROUNDING_METHOD: Final[str] = ROUND_HALF_EVEN
+DECIMAL_PLACES_IO: Final[int] = 2
 MONTHS_IN_ONE_YEAR: Final[int] = 12
+
+
+def round_decimal(value: Dec) -> Dec:
+    """Apply rounding procedure to a Decimal number."""
+    return value.quantize(Dec(10) ** -DECIMAL_PLACES_IO, OUTPUT_ROUNDING_METHOD)
 
 
 @dataclass(frozen=True)
@@ -62,6 +70,9 @@ def loan_projection(  # pylint: disable=R0913
         loan_balance(principal, monthly_rate, n + 1, monthly_payment)
         for n in range(term_months)
     ]
+
+    # Round the balances for output/display.
+    month_end_balance = [round_decimal(x) for x in month_end_balance]
 
     # Calculate the output/display interest amounts.
     month_start_balance = [principal] + month_end_balance[:-1]

@@ -16,6 +16,22 @@ def approx_website_value(value):
     return pytest.approx(value, abs=D("0.4"), rel=D("0.0005"))
 
 
+def assert_monthly_balance_consistency(
+    principal, monthly_payment, monthly_interest_charged, month_end_balance
+):
+    """Test that each new balance depends on previous balance, payment, and interest.
+
+    This uses exact equality testing, without approx(), to ensure no rounding errors.
+    """
+    previous_balance = principal
+    for month_index, end_balance in enumerate(month_end_balance):
+        expected_month_end_balance = (
+            previous_balance - monthly_payment + monthly_interest_charged[month_index]
+        )
+        assert expected_month_end_balance == end_balance
+        previous_balance = end_balance
+
+
 @pytest.mark.parametrize(
     "principal, interest_rate_annual_percentage, term_months, monthly_payment",
     [
@@ -39,6 +55,16 @@ def test_loan_website_calculator_values(
     assert len(projection.month_end_balance) == term_months
     assert len(projection.monthly_interest_charged) == term_months
     assert projection.month_end_balance[-1] == approx_website_value(0)
+    total_charged = term_months * monthly_payment
+    assert (
+        sum(projection.monthly_interest_charged) + principal
+    ) == approx_website_value(total_charged)
+    assert_monthly_balance_consistency(
+        principal,
+        monthly_payment,
+        projection.monthly_interest_charged,
+        projection.month_end_balance,
+    )
 
 
 @pytest.mark.parametrize(
@@ -63,3 +89,13 @@ def test_mortgage_website_calculator_values(
     assert len(projection.month_end_balance) == term_months
     assert len(projection.monthly_interest_charged) == term_months
     assert projection.month_end_balance[-1] == approx_website_value(0)
+    total_charged = term_months * monthly_payment
+    assert (
+        sum(projection.monthly_interest_charged) + principal
+    ) == approx_website_value(total_charged)
+    assert_monthly_balance_consistency(
+        principal,
+        monthly_payment,
+        projection.monthly_interest_charged,
+        projection.month_end_balance,
+    )
