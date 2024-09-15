@@ -65,6 +65,24 @@ def loan_projection(  # pylint: disable=R0913
     interest_type: InterestType,
 ) -> LoanProjection:
     """Calculate the projected monthly balance and interest for a loan."""
+    for var in [
+        "principal",
+        "interest_rate_annual_percentage",
+        "term_months",
+        "monthly_payment",
+    ]:
+        if locals()[var] < 0:
+            raise ValueError(f"Argument '{var}' cannot be negative.")
+    for var in ["term_months", "principal"]:
+        if locals()[var] == 0:
+            raise ValueError(f"Argument '{var}' cannot be zero.")
+    for var in ["principal", "monthly_payment"]:
+        if -locals()[var].as_tuple().exponent > DECIMAL_PLACES_IO:
+            raise ValueError(
+                f"Argument '{var}' cannot have more than {DECIMAL_PLACES_IO} "
+                f"decimal places, but got {-locals()[var].as_tuple().exponent}."
+            )
+
     if interest_rate_annual_percentage == 0:
         month_end_balance = [
             principal - monthly_payment * (n + 1) for n in range(term_months)
