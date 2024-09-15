@@ -1,4 +1,35 @@
-"""loan.py: functions for calculating loan balance and interest."""
+"""loan.py: functions for calculating loan balance and interest.
+
+Classes:
+    LoanProjection: Stores the result of a loan projection calculation.
+
+    InterestType(Enum): Indicates the method of annual to monthly rate conversion.
+
+Functions:
+    print_loan_projection(projection: LoanProjection):
+        Prints a table to stdout showing loan interest and balance for each month.
+
+    loan_balance(principal: Decimal, monthly_rate: Decimal, months: int,
+                 monthly_payment: Decimal) -> Decimal:
+        Calculates the remaining balance on a loan after a given number of months.
+
+    monthly_interest_rate(interest_rate_annual_percentage: Decimal,
+                          interest_type: InterestType) -> Decimal:
+        Calculates the periodic interest rate from the annual rate.
+
+    loan_projection(principal: Decimal, interest_rate_annual_percentage: Decimal,
+                    term_months: int, monthly_payment: Decimal,
+                    interest_type: InterestType,
+                    print_table: bool = False
+                    ) -> LoanProjection:
+        Calculates the projected monthly balance and interest for a loan.
+
+    round_decimal(value: Decimal) -> Decimal:
+        Applies a rounding procedure to a Decimal number.
+
+Dependencies:
+    - Python standard library only
+"""
 
 from dataclasses import dataclass
 from decimal import ROUND_HALF_EVEN
