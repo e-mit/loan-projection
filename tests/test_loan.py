@@ -151,6 +151,33 @@ def test_mortgage_barclays_schedule():
 @pytest.mark.parametrize(
     "interest_type", [loan.InterestType.NOMINAL, loan.InterestType.EFFECTIVE]
 )
+def test_early_repayment(interest_type):
+    principal = D(5000)
+    interest_rate_annual_percentage = D("6.2")
+    term_months = 14
+    monthly_payment = D(1000)
+
+    projection = loan.loan_projection(
+        principal,
+        interest_rate_annual_percentage,
+        term_months,
+        monthly_payment,
+        interest_type,
+    )
+
+    assert len(projection.monthly_interest_charged) == 6
+    assert len(projection.month_end_balance) == 6
+    assert_monthly_balance_consistency(
+        principal,
+        monthly_payment,
+        projection.monthly_interest_charged,
+        projection.month_end_balance,
+    )
+
+
+@pytest.mark.parametrize(
+    "interest_type", [loan.InterestType.NOMINAL, loan.InterestType.EFFECTIVE]
+)
 def test_zero_interest(interest_type):
     principal = D(4656557)
     interest_rate_annual_percentage = D(0)
@@ -170,6 +197,37 @@ def test_zero_interest(interest_type):
     assert len(projection.month_end_balance) == term_months
     assert projection.month_end_balance == tuple(
         principal - (monthly_payment * (i + 1)) for i in range(term_months)
+    )
+    assert_monthly_balance_consistency(
+        principal,
+        monthly_payment,
+        projection.monthly_interest_charged,
+        projection.month_end_balance,
+    )
+
+
+@pytest.mark.parametrize(
+    "interest_type", [loan.InterestType.NOMINAL, loan.InterestType.EFFECTIVE]
+)
+def test_zero_interest_early_repayment(interest_type):
+    principal = D(5000)
+    interest_rate_annual_percentage = D(0)
+    term_months = 34
+    monthly_payment = D(1000)
+
+    projection = loan.loan_projection(
+        principal,
+        interest_rate_annual_percentage,
+        term_months,
+        monthly_payment,
+        interest_type,
+    )
+
+    assert set(projection.monthly_interest_charged) == {0}
+    assert len(projection.monthly_interest_charged) == 5
+    assert len(projection.month_end_balance) == 5
+    assert projection.month_end_balance == tuple(
+        principal - (monthly_payment * i) for i in range(1, 6)
     )
     assert_monthly_balance_consistency(
         principal,

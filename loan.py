@@ -78,6 +78,12 @@ def loan_projection(  # pylint: disable=R0913
             for n in range(term_months)
         ]
 
+    # Truncate if balance goes negative or zero.
+    stop_index = next(
+        (i + 1 for i, bal in enumerate(month_end_balance) if bal <= 0), term_months
+    )
+    month_end_balance = month_end_balance[:stop_index]
+
     # Round the balances for output/display.
     month_end_balance = [round_decimal(x) for x in month_end_balance]
 
