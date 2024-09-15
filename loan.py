@@ -65,11 +65,18 @@ def loan_projection(  # pylint: disable=R0913
     interest_type: InterestType,
 ) -> LoanProjection:
     """Calculate the projected monthly balance and interest for a loan."""
-    monthly_rate = monthly_interest_rate(interest_rate_annual_percentage, interest_type)
-    month_end_balance = [
-        loan_balance(principal, monthly_rate, n + 1, monthly_payment)
-        for n in range(term_months)
-    ]
+    if interest_rate_annual_percentage == 0:
+        month_end_balance = [
+            principal - monthly_payment * (n + 1) for n in range(term_months)
+        ]
+    else:
+        monthly_rate = monthly_interest_rate(
+            interest_rate_annual_percentage, interest_type
+        )
+        month_end_balance = [
+            loan_balance(principal, monthly_rate, n + 1, monthly_payment)
+            for n in range(term_months)
+        ]
 
     # Round the balances for output/display.
     month_end_balance = [round_decimal(x) for x in month_end_balance]
